@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>오늘의 영양제</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap">
+<style>
+:root{--bg:#EDF1F0;--surface:#FFFFFF;--ink:#1B2B30;--sub:#6A7B80;--line:#D5DEDC;--ok:#2E7D68;--ok-soft:#D8EDE6;--wt:#B4546F;--sel:#1B2B30;color-scheme:light;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#131C1F;--surface:#1C282C;--ink:#E7EFEE;--sub:#8FA1A5;--line:#2E3E43;--ok:#5CC2A5;--ok-soft:#21433B;--wt:#E58AA5;--sel:#E7EFEE;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#131C1F;--surface:#1C282C;--ink:#E7EFEE;--sub:#8FA1A5;--line:#2E3E43;--ok:#5CC2A5;--ok-soft:#21433B;--wt:#E58AA5;--sel:#E7EFEE;color-scheme:dark}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans KR",system-ui,sans-serif;line-height:1.55}
+main{max-width:480px;margin:0 auto;padding:20px 16px 48px}
+header{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:16px}
+h1{font-size:22px;margin:0;font-weight:700}
+.sub{color:var(--sub);font-size:13px}
+.tabs{display:flex;background:var(--surface);border-radius:12px;padding:4px;margin-bottom:16px;border:1px solid var(--line)}
+.tabs button{flex:1;border:0;background:none;color:var(--sub);font:500 15px inherit;font-family:inherit;padding:9px;border-radius:9px;cursor:pointer}
+.tabs button[aria-selected="true"]{background:var(--sel);color:var(--bg)}
+button:focus-visible,input:focus-visible{outline:2px solid var(--ok);outline-offset:2px}
+.datebar{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.datebar button,.nav button{border:1px solid var(--line);background:var(--surface);color:var(--ink);width:38px;height:38px;border-radius:10px;font-size:16px;cursor:pointer}
+.datebar b{font-size:17px}
+.prog{height:6px;background:var(--line);border-radius:3px;margin:0 0 16px;overflow:hidden}
+.prog i{display:block;height:100%;background:var(--ok);transition:width .25s}
+.slot{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;margin-bottom:10px}
+.slot h2{font-size:14px;margin:0 0 6px;color:var(--sub);font-weight:500}
+.item{display:flex;align-items:center;gap:12px;width:100%;border:0;background:none;color:var(--ink);font:500 16px inherit;font-family:inherit;text-align:left;padding:9px 0;cursor:pointer;border-top:1px solid var(--line)}
+.item:first-of-type{border-top:0}
+.box{width:24px;height:24px;border-radius:7px;border:2px solid var(--line);flex:none;display:grid;place-items:center;color:transparent;font-size:15px;font-weight:700}
+.item[aria-pressed="true"] .box{background:var(--ok);border-color:var(--ok);color:var(--surface)}
+.item[aria-pressed="true"] span:last-child{color:var(--sub);text-decoration:line-through}
+.wbox{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px;margin-top:16px}
+.wbox h2{font-size:14px;margin:0 0 8px;color:var(--sub);font-weight:500}
+.wrow{display:flex;gap:8px}
+.wrow input{flex:1;min-width:0;font:700 20px inherit;font-family:inherit;padding:8px 12px;border:1px solid var(--line);border-radius:10px;background:var(--bg);color:var(--ink)}
+.wrow button{border:0;background:var(--wt);color:#fff;font:500 15px inherit;font-family:inherit;padding:0 18px;border-radius:10px;cursor:pointer}
+.wrow .clr{background:none;color:var(--sub);border:1px solid var(--line);padding:0 12px}
+.nav{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
+.nav b{font-size:17px}
+.grid{display:grid;grid-template-columns:repeat(7,1fr);gap:4px}
+.dow{text-align:center;font-size:12px;color:var(--sub);padding-bottom:2px}
+.day{aspect-ratio:1/1.25;border:1px solid var(--line);background:var(--surface);color:var(--ink);border-radius:10px;padding:4px 2px 5px;display:flex;flex-direction:column;align-items:center;justify-content:space-between;font-family:inherit;cursor:pointer}
+.day.empty{visibility:hidden}
+.day .n{font-size:13px;font-weight:500}
+.day .w{font-size:11px;color:var(--wt);font-weight:700;min-height:14px}
+.day .bar{width:70%;height:4px;border-radius:2px;background:var(--line);overflow:hidden}
+.day .bar i{display:block;height:100%;background:var(--ok)}
+.day.today{border:2px solid var(--ink)}
+.day.full{background:var(--ok-soft)}
+.legend{font-size:12px;color:var(--sub);margin:10px 2px 0}
+.chart{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px;margin-top:16px}
+.chart h2{font-size:14px;margin:0 0 6px;color:var(--sub);font-weight:500}
+.chart svg{width:100%;height:auto;display:block}
+.stat{display:flex;justify-content:space-between;font-size:13px;color:var(--sub);margin-top:6px}
+.stat b{color:var(--ink)}
+.hint{text-align:center;color:var(--sub);font-size:12px;margin-top:20px}
+@media (prefers-reduced-motion:reduce){.prog i{transition:none}}
+</style>
+</head>
+<body>
+<main>
+<header><div><h1>오늘의 영양제</h1><div class="sub" id="today"></div></div><div class="sub" id="streak"></div></header>
+<div class="tabs" role="tablist">
+<button role="tab" id="t1" aria-selected="true">복용 체크</button>
+<button role="tab" id="t2" aria-selected="false">캘린더</button>
+</div>
+<section id="v1"></section>
+<section id="v2" hidden></section>
+<p class="hint">기록은 이 기기의 브라우저에 저장돼요.</p>
+</main>
+<script>
+const SLOTS=[
+{n:"기상 직후",i:["알파리포산 1정","이노시톨 1포"]},
+{n:"점심 식사 10~15분 전",i:["베르베린 500mg 1정"]},
+{n:"점심 식사 직후",i:["노르딕 프로오메가 2정","블랙커런트오일 1정"]},
+{n:"저녁 식사 10~15분 전",i:["베르베린 500mg 1정"]},
+{n:"자기 전",i:["이노시톨 1포"]}];
+const TOTAL=SLOTS.reduce((a,s)=>a+s.i.length,0);
+const KEY="supp-tracker-v1";
+let S={checks:{},weights:{}};
+try{const r=localStorage.getItem(KEY);if(r)S=JSON.parse(r)}catch(e){}
+if(!S.checks)S.checks={};if(!S.weights)S.weights={};
+function save(){try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}}
+const pad=n=>String(n).padStart(2,"0");
+const iso=d=>d.getFullYear()+"-"+pad(d.getMonth()+1)+"-"+pad(d.getDate());
+const fromIso=s=>{const[a,b,c]=s.split("-").map(Number);return new Date(a,b-1,c)};
+const DOW=["일","월","화","수","목","금","토"];
+const todayIso=iso(new Date());
+let sel=todayIso,month=todayIso.slice(0,7),tab=1;
+const count=d=>Object.values(S.checks[d]||{}).filter(Boolean).length;
+const label=d=>{const x=fromIso(d);return (x.getMonth()+1)+"월 "+x.getDate()+"일 ("+DOW[x.getDay()]+")"};
+function streak(){let n=0,d=new Date();if(count(iso(d))<TOTAL)d.setDate(d.getDate()-1);
+while(count(iso(d))===TOTAL){n++;d.setDate(d.getDate()-1)}return n}
+function toggle(k){const c=S.checks[sel]=S.checks[sel]||{};c[k]=!c[k];if(!c[k])delete c[k];save();render()}
+function shift(n){const d=fromIso(sel);d.setDate(d.getDate()+n);sel=iso(d);month=sel.slice(0,7);render()}
+function saveW(){const v=parseFloat(document.getElementById("w").value);
+if(!isNaN(v)&&v>0&&v<500){S.weights[sel]=Math.round(v*10)/10}save();render()}
+function clearW(){delete S.weights[sel];save();render()}
+function viewCheck(){
+const c=S.checks[sel]||{},n=count(sel);
+let h=`<div class="datebar"><button onclick="shift(-1)" aria-label="전날">‹</button><div style="text-align:center"><b>${label(sel)}</b><div class="sub">${sel===todayIso?"오늘 · ":""}${n}/${TOTAL}개 복용</div></div><button onclick="shift(1)" aria-label="다음날">›</button></div>`;
+h+=`<div class="prog"><i style="width:${n/TOTAL*100}%"></i></div>`;
+SLOTS.forEach((s,si)=>{h+=`<div class="slot"><h2>${s.n}</h2>`;
+s.i.forEach((it,ii)=>{const k=si+"_"+ii;h+=`<button class="item" aria-pressed="${!!c[k]}" onclick="toggle('${k}')"><span class="box">✓</span><span>${it}</span></button>`});
+h+=`</div>`});
+const w=S.weights[sel];
+h+=`<div class="wbox"><h2>체중</h2><div class="wrow"><input id="w" type="number" inputmode="decimal" step="0.1" placeholder="kg" value="${w??""}" aria-label="체중 kg"><button onclick="saveW()">저장</button>${w!=null?'<button class="clr" onclick="clearW()">삭제</button>':""}</div></div>`;
+return h}
+function chart(){
+const ds=Object.keys(S.weights).sort().slice(-30);
+if(ds.length<2)return `<div class="chart"><h2>체중 추이</h2><div class="sub">체중을 2번 이상 기록하면 그래프가 나타나요.</div></div>`;
+const vs=ds.map(d=>S.weights[d]),mn=Math.min(...vs),mx=Math.max(...vs),r=(mx-mn)||1;
+const W=320,H=120,p=14;
+const pts=vs.map((v,i)=>[p+i*(W-2*p)/(ds.length-1),H-p-(v-mn)/r*(H-2*p)]);
+const line=pts.map(q=>q.join(",")).join(" ");
+const diff=(vs[vs.length-1]-vs[0]).toFixed(1);
+return `<div class="chart"><h2>체중 추이 (최근 ${ds.length}회 기록)</h2><svg viewBox="0 0 ${W} ${H}" role="img" aria-label="체중 추이 그래프"><polyline points="${line}" fill="none" stroke="var(--wt)" stroke-width="2.5" stroke-linejoin="round" stroke-linecap="round"/>${pts.map(q=>`<circle cx="${q[0]}" cy="${q[1]}" r="3" fill="var(--wt)"/>`).join("")}</svg><div class="stat"><span>${vs[0]}kg</span><span>변화 <b>${diff>0?"+":""}${diff}kg</b></span><span>${vs[vs.length-1]}kg</span></div></div>`}
+function viewCal(){
+const[y,m]=month.split("-").map(Number);
+const first=new Date(y,m-1,1).getDay(),last=new Date(y,m,0).getDate();
+let h=`<div class="nav"><button onclick="mv(-1)" aria-label="이전 달">‹</button><b>${y}년 ${m}월</b><button onclick="mv(1)" aria-label="다음 달">›</button></div><div class="grid">`;
+DOW.forEach(d=>h+=`<div class="dow">${d}</div>`);
+for(let i=0;i<first;i++)h+=`<div class="day empty"></div>`;
+for(let d=1;d<=last;d++){const k=y+"-"+pad(m)+"-"+pad(d),n=count(k),w=S.weights[k];
+h+=`<button class="day${k===todayIso?" today":""}${n===TOTAL?" full":""}" onclick="pick('${k}')" aria-label="${m}월 ${d}일"><span class="n">${d}</span><span class="w">${w!=null?w:""}</span><span class="bar"><i style="width:${n/TOTAL*100}%"></i></span></button>`}
+h+=`</div><p class="legend">숫자는 체중(kg), 아래 막대는 그날 복용 비율이에요. 날짜를 누르면 그날 기록을 고칠 수 있어요.</p>`;
+const mk=Object.keys(S.checks).filter(k=>k.startsWith(month)&&count(k)===TOTAL).length;
+h+=`<div class="stat" style="margin-top:8px"><span>이 달 전부 복용한 날</span><b>${mk}일</b></div>`;
+return h+chart()}
+function mv(n){const[y,m]=month.split("-").map(Number);const d=new Date(y,m-1+n,1);month=d.getFullYear()+"-"+pad(d.getMonth()+1);render()}
+function pick(k){sel=k;tab=1;render()}
+function render(){
+document.getElementById("today").textContent=label(todayIso);
+const s=streak();document.getElementById("streak").textContent=s>0?"연속 "+s+"일 완료":"";
+document.getElementById("t1").setAttribute("aria-selected",tab===1);
+document.getElementById("t2").setAttribute("aria-selected",tab===2);
+document.getElementById("v1").hidden=tab!==1;document.getElementById("v2").hidden=tab!==2;
+if(tab===1)document.getElementById("v1").innerHTML=viewCheck();else document.getElementById("v2").innerHTML=viewCal()}
+document.getElementById("t1").onclick=()=>{tab=1;render()};
+document.getElementById("t2").onclick=()=>{tab=2;month=sel.slice(0,7);render()};
+render();
+</script>
+</body>
+</html>
