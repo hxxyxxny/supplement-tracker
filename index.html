@@ -83,9 +83,9 @@ button:focus-visible,input:focus-visible{outline:2px solid var(--ok);outline-off
 const SLOTS=[
 {n:"기상 직후",i:["알파리포산 1정","이노시톨 1포"]},
 {n:"점심 식사 10~15분 전",i:["베르베린 500mg 1정"]},
-{n:"점심 식사 직후",i:["노르딕 프로오메가 2정","블랙커런트오일 1정"]},
+{n:"점심 식사 직후",i:["노르딕 프로오메가 2정"]},
 {n:"저녁 식사 10~15분 전",i:["베르베린 500mg 1정"]},
-{n:"자기 전",i:["이노시톨 1포"]}];
+{n:"자기 전",i:["이노시톨 1포","블랙커런트오일 2알"]}];
 const TOTAL=SLOTS.reduce((a,s)=>a+s.i.length,0);
 const KEY="supp-tracker-v1";
 let S={checks:{},weights:{}};
@@ -98,7 +98,8 @@ const fromIso=s=>{const[a,b,c]=s.split("-").map(Number);return new Date(a,b-1,c)
 const DOW=["일","월","화","수","목","금","토"];
 const todayIso=iso(new Date());
 let sel=todayIso,month=todayIso.slice(0,7),tab=1;
-const count=d=>Object.values(S.checks[d]||{}).filter(Boolean).length;
+const VALID=new Set(SLOTS.flatMap((s,si)=>s.i.map((_,ii)=>si+"_"+ii)));
+const count=d=>Object.keys(S.checks[d]||{}).filter(k=>VALID.has(k)&&S.checks[d][k]).length;
 const label=d=>{const x=fromIso(d);return (x.getMonth()+1)+"월 "+x.getDate()+"일 ("+DOW[x.getDay()]+")"};
 function streak(){let n=0,d=new Date();if(count(iso(d))<TOTAL)d.setDate(d.getDate()-1);
 while(count(iso(d))===TOTAL){n++;d.setDate(d.getDate()-1)}return n}

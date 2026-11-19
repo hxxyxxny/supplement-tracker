@@ -1,4 +1,4 @@
-const CACHE = "supp-v1";
+const CACHE = "supp-v2";
 const CORE = ["/", "/index.html", "/manifest.json", "/icon-192.png", "/icon-512.png", "/apple-touch-icon.png"];
 self.addEventListener("install", e => {
   e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)));
